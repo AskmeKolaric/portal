@@ -1,0 +1,40 @@
+{
+  "COMMON": {
+    "NO_RECORDS_FOUND": "No records found"
+  },
+  "SCM": {
+    "INVOICE": {
+      "NAME": "Name",
+      "PERIOD": "Period",
+      "AMOUNT": "Amount",
+      "NUMBER": "Number",
+      "TAX_AMOUNT": "Tax amount",
+      "TOTAL": "Total",
+      "NOTE": "Note"
+    },
+    "EMPLOYEE": {
+      "FIRSTNAME": "First Name",
+      "LASTNAME": "Last Name",
+      "STREET": "Street",
+      "HOUSENUMBER": "House Number",
+      "DOORNUMBER": "Door Number",
+      "POSTALCODE": "Postal Code",
+      "CITY": "City",
+      "COUNTRY": "Country",
+      "EMPLOYEENUMBER": "Employee Number"
+    },
+    "INQUIRY": {
+      "NAME": "Name",
+      "INQUIRYNUMBER": "Inquiry Number"
+    }
+  },
+  "LOGIN": {
+    "TITLE": "Sing in to Personadienstleistung GmbH",
+    "WELCOME": "Welcome",
+    "EMAIL": "E-mail address",
+    "PASSWORD": "Password",
+    "REMEMBER_ME": "Remember me",
+    "FORGOT_PASSWORD": "Forgot Password",
+    "SIGN_in": "Sign in"
+  }
+}

@@ -1,0 +1,387 @@
+<p-table
+    #dataTable
+    appTableClickHandler
+    [component]="this"
+    id="generic-table"
+    [columns]="tableColumns"
+    [value]="tableEntities"
+    [customSort]="true"
+    [lazy]="true"
+    [paginator]="true" [rows]="rows" [first]="first" [sortField]="sortField" [sortOrder]="sortOrder" [totalRecords]="totalCount"
+    (onLazyLoad)="onLazyLoadEvent($event)"
+    (onRowSelect)="onSelect($event)"
+    (onRowUnselect)="onUnselect($event)"
+    [loading]="isLoadingData"
+    selectionMode="multiple"
+    [(selection)]="selection.selection"
+    [metaKeySelection]="true"
+    [resizableColumns]="true"
+    columnResizeMode="expand"
+    scrollable="true"
+    [style]="{width: tableWidth + 'px' }"
+>
+
+  <ng-template pTemplate="emptymessage" let-columns>
+    <tr>
+      <td [attr.colspan]="columns.length + 1">
+        {{ 'COMMON.NO_RECORDS_FOUND'  | translate }}
+      </td>
+    </tr>
+  </ng-template>
+
+    <ng-template *ngIf="tableHeader" pTemplate="caption">
+
+        <div class="ui-g">
+            <div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align:right">
+                <span *ngFor="let button of tableHeader.buttons" class="toolbar-item">
+                    <button
+                      pButton
+                      *ngIf="button.visible === undefined || button.visible()"
+                      (click)="onTableButtonClick($event, button)"
+                      [disabled]="button.disabled !== undefined && button.disabled()"
+                      type="button"
+                      icon="{{button.icon}}"
+                      pTooltip="{{button.tooltip | translate}}"
+                      class="{{button.class}}"
+                      [attr.data-selenium-id]="button.seleniumId||''"
+                    ></button>
+                </span>
+
+                <span *ngFor="let dropdown of tableHeader.dropdowns" class="toolbar-item">
+                  <p-dropdown
+                    [options]="dropdown.options"
+                    placeholder="---"
+                    [showClear]="true"
+                    (onChange)="onToolbarDropdownChange($event, dropdown)"
+                    class="{{dropdown.class}}"
+                    [style]="{'width': '200px'}"
+                    [autoWidth]="false"
+                  ></p-dropdown>
+                </span>
+            </div>
+        </div>
+
+    </ng-template>
+
+    <ng-template pTemplate="colgroup" let-columns>
+        <colgroup>
+            <col style="width: 50px">
+            <col *ngFor="let column of columns" [ngStyle]="{width: column.style.width}">
+        </colgroup>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+            <th pResizableColumn></th>
+            <th pResizableColumn *ngFor="let column of columns" [pSortableColumn]="column.sort ? ( column.sort.key ? column.sort.key : column.key ) : undefined " pTooltip="{{column.header | translate}}" [attr.data-selenium-id]="'table-column-' + column.key">
+                <p-sortIcon *ngIf="column.sort" [field]="column.sort && column.sort.key ? column.sort.key : column.key"></p-sortIcon>
+                <span [innerHtml]="column.header | translate"></span>
+            </th>
+        </tr>
+        <tr>
+            <th style="width: 50px">
+              <p-checkbox
+                (onChange)="onHeaderCheckboxChange($event)"
+                binary="true"
+                [ngModel]="isHeaderCheckboxChecked()"
+              ></p-checkbox>
+            </th>
+
+            <th *ngFor="let column of columns">
+
+                <ng-template [ngIf]="column.filter">
+                    <span [ngSwitch]="column.filter.type" class="ui-filter ui-g ui-g-12" >
+
+                        <p-dropdown
+                            *ngIf="column.filter.operator"
+                            [ngModel]="getFilterOperatorValue(column)"
+                            [options]="column.filter.operator.options | async"
+                            placeholder="---"
+                            (onChange)="onFilterOperatorEvent($event, column)"
+                            class="ui-g ui-g-4"
+                            [style]="{'padding-right': '6px'}"
+                            [disabled]="getFilterValue(column) === null"
+                            appendTo="body"
+                        ></p-dropdown>
+
+                        <p-checkbox
+                            *ngSwitchCase="'checkbox'"
+                            [ngModel]="getFilterValue(column)"
+                            (onChange)="onFilterEvent($event, column)"
+                            binary="true"
+                        ></p-checkbox>
+
+                        <span *ngSwitchCase="'calendar'" [style.marginTop.px]="2" class="ui-g ui-g-8">
+                          <p-calendar
+                              name="{{column.key}}"
+                              [ngModel]="getFilterValue(column)"
+                              [showIcon]="true"
+                              dateFormat="M dd, yy"
+                              (onSelect)="onFilterEvent($event, column)"
+                              inputStyleClass="ui-filter-calendar-input"
+                              class="ui-filter-calendar"
+                              showButtonBar="true"
+                              (onTodayClick)="onFilterEvent($event, column, 'today')"
+                              (onClearClick)="onFilterEvent($event, column, 'clear')"
+                              appendTo="body"
+                          ></p-calendar>
+                        </span>
+
+                        <p-dropdown
+                            *ngSwitchCase="'dropdown'"
+                            [options]="column.filter.options | async"
+                            (onChange)="onFilterEvent($event.value, column)"
+                            [ngModel]="getFilterValue(column)"
+                            appendTo="body"
+                            [style]="{'width': '100%'}"
+                            class="ui-filter-dropdown"
+                        ></p-dropdown>
+
+                        <span *ngSwitchCase="'number'" class="ui-g ui-g-8">
+                            <p-spinner
+                                appSpinner
+                                size="30"
+                                [step]="column.filter.step || 1"
+                                [ngModel]="getFilterValue(column)"
+                                (valueChange)="onFilterEvent($event, column)"
+                            ></p-spinner>
+                        </span>
+
+
+                        <ng-template [ngSwitchDefault]>
+                            <input
+                                pInputText
+                                [ngModel]="getFilterValue(column)"
+                                type="text"
+                                (input)="onFilterEvent($event, column)"
+                            >
+                        </ng-template>
+                    </span>
+                </ng-template>
+
+            </th>
+        </tr>
+        <tr *ngIf="isSummaryActive()">
+          <th pResizableColumn></th>
+          <th pResizableColumn *ngFor="let column of columns">
+            <b
+              pTooltip="{{tableSummary[column.key] ? tableSummary[column.key].tooltip : ''}}"
+            >
+              {{ tableSummary[column.key] ? tableSummary[column.key].value : '' }}
+            </b>
+          </th>
+        </tr>
+        <ng-container *ngIf="isStickyRowsActive()">
+          <tr *ngFor="let row of tableStickyRows; let rowNumber = index">
+            <th pResizableColumn></th>
+            <th pResizableColumn *ngFor="let column of columns" style="font-weight:bold"
+                [innerHtml]="getStickyColumnValue(rowNumber, column.key)" ></th>
+          </tr>
+        </ng-container>
+
+    </ng-template>
+    <ng-template pTemplate="body" let-entity let-columns="columns" let-rowIndex="rowIndex">
+        <tr [ngClass]="isRowCheckboxChecked(entity) ? 'ui-state-selected' : null" [attr.data-entity-id]="entity.id" [attr.data-selenium-id]="'row-' + rowIndex" [pSelectableRow]="entity" [pSelectableRowIndex]="rowIndex">
+
+            <td>
+              <!-- buggy -->
+              <!-- <p-tableCheckbox [value]="entity"></p-tableCheckbox> -->
+              <i class="fa {{ isRowCheckboxChecked(entity) ? 'ui-icon-check-box' : 'ui-icon-check-box-outline-blank' }}" aria-hidden="true" [attr.data-selenium-id]="'column-checkbox-' + rowIndex"></i>
+            </td>
+
+            <td *ngFor="let column of columns;" pEditableColumn [style.overflow]="'hidden'" [style.textOverflow]="'ellipsis'" [style.whiteSpace]="'nowrap'"
+                [attr.data-selenium-id]="'column-value-' + column.key + '-' + rowIndex">
+
+                <ng-template [ngIf]="!column.edit">
+                        <ng-template [ngIf]="isColumnRendererDefined(column)">
+
+                          <ng-template [ngIf]="column.renderType === 'number'">
+                            <span [innerHTML]="column.renderer(entity)" pTooltip="{{column.tooltip}}"></span>
+                          </ng-template>
+
+                          <ng-template [ngIf]="column.renderType !== 'number'">
+                            <span [innerHTML]="column.renderer(entity)" [escape]="false" pTooltip="{{column.renderTooltip && column.renderTooltip(entity) ? column.renderTooltip(entity) : '' }}"></span>
+                          </ng-template>
+
+                        </ng-template>
+                        <ng-template [ngIf]="!isColumnRendererDefined(column)">
+                            <span [ngSwitch]="column.renderType" >
+
+                                <p-checkbox
+                                    *ngSwitchCase="'checkbox'"
+                                    [(ngModel)]="entity[column.key]"
+                                    binary="true"
+                                ></p-checkbox>
+
+                                <ng-template [ngSwitchCase]="'date'" >
+                                    {{ entity[column.key] | date }}
+                                </ng-template>
+
+                              <ng-template [ngSwitchCase]="'number'" >
+                                    {{ entity[column.key] }}
+                                </ng-template>
+
+                                <ng-template [ngSwitchDefault]>
+                                    {{entity[column.key] }}
+                                </ng-template>
+                            </span>
+                        </ng-template>
+                </ng-template>
+                <span *ngIf="column.edit">
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+
+                                <span [ngSwitch]="column.edit.type">
+
+                                    <p-dropdown
+                                        *ngSwitchCase="'dropdown'"
+                                        [(ngModel)]="entity[column.key]"
+                                        [options]="column.edit.options | async"
+                                        (onChange)="onCellEditEvent($event, column, entity)"
+                                        appendTo="body"
+                                        [style]="{'width': '100%'}"
+                                    ></p-dropdown>
+
+                                    <p-calendar
+                                        *ngSwitchCase="'calendar'"
+                                        [(ngModel)]="entity[column.key]"
+                                        [showIcon]="true"
+                                        (onSelect)="onCellEditEvent($event, column, entity)"
+                                        appendTo="body"
+                                        inputStyleClass="ui-filter-calendar-input"
+                                        class="ui-filter-calendar"
+                                    ></p-calendar>
+
+                                    <p-spinner
+                                      appSpinner
+                                        *ngSwitchCase="'number'"
+                                        size="30"
+                                        [step]="column.edit.step"
+                                        [(ngModel)]="+entity[column.key]"
+                                        (valueChange)="onCellEntityChangeEvent($event, column, entity)"
+                                        [max]="column.edit.max"
+                                        [min]="column.edit.min"
+                                    ></p-spinner>
+
+                                    <p-checkbox
+                                        *ngSwitchCase="'checkbox'"
+                                        [(ngModel)]="entity[column.key]"
+                                        binary="true"
+                                        (onChange)="onCellEditEvent($event, column, entity)"
+                                    ></p-checkbox>
+
+                                    <p-autoComplete
+                                      appAutoComplete
+                                      class="form-control"
+                                      *ngSwitchCase="'autocomplete'"
+                                      size="30"
+                                      appendTo="body"
+                                      [style]="{'width': '100%'}"
+                                      [field]="column.edit.fieldName"
+                                      [handler]="column.edit.autocompleteHandler"
+                                      [dropdown]="true"
+                                      [forceSelection]="true"
+                                      (onSelect)="onCellEditEvent($event, column, entity)"
+                                    ></p-autoComplete>
+
+                                    <ng-template [ngSwitchDefault]>
+                                        <input
+                                          pInputText
+                                          class="ui-edit-input-text"
+                                          type="text"
+                                          (keydown)="onCellEntityChangeEvent($event, column, entity)"
+                                          [(ngModel)]="entity[column.key]"
+                                        >
+                                    </ng-template>
+
+                                </span>
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                                <ng-template [ngIf]="isColumnRendererDefined(column)">
+
+                                  <ng-template [ngIf]="column.renderType === 'number'">
+                                    <span [innerHTML]="column.renderer(entity)"></span>
+                                  </ng-template>
+
+                                  <ng-template [ngIf]="column.renderType !== 'number'">
+                                    <span [innerHTML]="column.renderer(entity)"></span>
+                                  </ng-template>
+
+                                </ng-template>
+
+                                <ng-template [ngIf]="!isColumnRendererDefined(column)">
+                                    <span [ngSwitch]="column.renderType"  >
+
+                                        <p-checkbox
+                                            *ngSwitchCase="'checkbox'"
+                                            [(ngModel)]="entity[column.key]"
+                                            binary="true"
+                                            (onChange)="onCellEditEvent($event, column, entity)"
+                                        ></p-checkbox>
+
+                                        <ng-template [ngSwitchCase]="'date'">
+                                            {{ entity[column.key] | date }}
+                                        </ng-template>
+
+                                        <ng-template [ngSwitchCase]="'number'">
+                                            {{ entity[column.key] }}
+                                        </ng-template>
+
+                                        <ng-template [ngSwitchDefault]>
+                                            {{ entity[column.key] }}
+                                        </ng-template>
+                                    </span>
+                                </ng-template>
+                        </ng-template>
+                    </p-cellEditor>
+                </span>
+                <span *ngIf="column.menu" [style.whiteSpace]="'normal'">
+                  <span *ngFor="let button of column.menu.buttons;" style="padding-left: 5px;">
+                    <button
+                      *ngIf="button.condition === undefined || button.condition(entity)"
+                      (click)="button.click(entity)"
+                      pButton
+                      type="button"
+                      icon="{{button.icon}}"
+                      pTooltip="{{button.tooltip | translate}}"
+                      class="{{button.class}}"
+                      [attr.data-selenium-id]="button.seleniumId + '-' + rowIndex ||''"
+                    ></button>
+                  </span>
+                </span>
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template *ngIf="tableFooter" pTemplate="summary">
+        <div class="row">
+            <div class="col-lg-12">
+                <span *ngFor="let button of tableFooter.buttons">
+                    <button
+                        pButton
+                        *ngIf="button.condition === undefined || button.condition()"
+                        (click)="onTableButtonClick($event, button)"
+                        [disabled]="button.disabled !== undefined && button.disabled()"
+                        type="button"
+                        icon="{{button.icon}}"
+                        pTooltip="{{button.tooltip | translate}}"
+                        class="{{button.class}}"
+                    ></button>
+                </span>
+            </div>
+        </div>
+    </ng-template>
+</p-table>
+
+<!-- use new primeng dynamic dialogs -->
+<p-dialog
+  header="{{ 'COMMON.EDIT_COLUMNS' | translate }}"
+  *ngIf="columnVisibilityDialog"
+  [(visible)]="columnVisibilityDialog"
+>
+  <app-shared-table-column-reorder
+    *ngIf="columnVisibilityDialog"
+    [tableComponent]="this"
+    (columnsSaved)="onColumnsSaved()"
+    (columnsSaveCanceled)="onColumnsSaveCanceled()"
+    (columnsReset)="onColumnsReset()"
+  ></app-shared-table-column-reorder>
+</p-dialog>

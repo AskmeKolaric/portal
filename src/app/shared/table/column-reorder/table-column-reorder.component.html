@@ -1,0 +1,31 @@
+<div class="ui-fluid">
+  <div class="ui-g">
+    <div class="ui-g-12">
+      <p-pickList
+        [source]="visibleColumns"
+        [target]="hiddenColumns"
+        [responsive]="true"
+        sourceHeader="{{ 'COMMON.VISIBLE_COLUMN' | translate }}"
+        targetHeader="{{ 'COMMON.HIDDEN_COLUMN' | translate }}"
+        [showSourceControls]="true"
+        [showTargetControls]="false"
+      >
+        <ng-template let-column pTemplate="item">
+          <div class="ui-helper-clearfix">
+            <div >{{ getColumnHeader(column) }}</div>
+          </div>
+        </ng-template>
+      </p-pickList>
+    </div>
+
+    <div class="ui-g-12 ui-md-7">
+      <button pButton type="button" label="{{ 'COMMON.SAVE' | translate }}" icon="ui-icon-save" (click)="onSave()"></button>
+    </div>
+    <div class="ui-g-12 ui-md-3">
+      <button pButton type="button" label="{{ 'COMMON.CANCEL' | translate }}" icon="ui-icon-clear" (click)="onCancel()" class="ui-button-danger"></button>
+    </div>
+    <div class="ui-g-12 ui-md-2">
+      <button pButton type="button" label="{{ 'COMMON.RESET' | translate }}" icon="ui-icon-trash" (click)="onReset()" class="ui-button-danger"></button>
+    </div>
+  </div>
+</div>

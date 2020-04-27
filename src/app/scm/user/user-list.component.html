@@ -1,0 +1,10 @@
+<app-table
+    #table
+    [columns]="columns"
+    [header]="header"
+    [stateName]="'contactList'"
+    [totalCount]="totalCount"
+    [entities]="entities"
+    [isLoadingData]="isLoadingData"
+    (lazyLoad)="onLoad($event)"
+></app-table>

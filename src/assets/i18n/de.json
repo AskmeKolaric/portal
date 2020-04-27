@@ -1,0 +1,40 @@
+{
+  "COMMON": {
+    "NO_RECORDS_FOUND": "No records found"
+  },
+  "SCM": {
+    "INVOICE": {
+      "NAME": "Name",
+      "PERIOD": "Periode",
+      "AMOUNT": "Netto",
+      "NUMBER": "Nummer",
+      "TAX_AMOUNT": "Mwst",
+      "TOTAL": "Gesamt",
+      "NOTE": "Note"
+    },
+    "EMPLOYEE": {
+      "FIRSTNAME": "Name",
+      "LASTNAME": "Nachname",
+      "STREET": "Straße",
+      "HOUSENUMBER": "Nummer",
+      "DOORNUMBER": "Stiege/Tür",
+      "POSTALCODE": "PLZ",
+      "CITY": "Ort",
+      "COUNTRY": "Land",
+      "EMPLOYEENUMBER": "Mitarbeiternummer"
+    },
+    "INQUIRY": {
+      "NAME": "Name",
+      "INQUIRYNUMBER": "Anfrage Nummer"
+    }
+  },
+  "LOGIN": {
+    "TITLE": "Personaldienstleistung GmbH",
+    "WELCOME": "Herzlich Willkommen",
+    "EMAIL": "E-mail",
+    "PASSWORD": "Kennwort",
+    "REMEMBER_ME": "Benutzer speichern",
+    "FORGOT_PASSWORD": "Kennwort vergessen",
+    "SIGN_IN": "Anmelden"
+  }
+}

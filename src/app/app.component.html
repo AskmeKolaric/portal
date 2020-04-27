@@ -1,0 +1,33 @@
+<div class="layout-wrapper" (click)="onLayoutClick()"
+     [ngClass]="{'layout-wrapper-overlay-sidebar': isOverlay(),
+                 'layout-wrapper-slim-sidebar': isSlim(),
+                 'layout-wrapper-horizontal-sidebar': isHorizontal(),
+                 'layout-wrapper-overlay-sidebar-active': overlayMenuActive,
+                 'layout-wrapper-sidebar-inactive': staticMenuDesktopInactive,
+                 'layout-wrapper-sidebar-mobile-active': staticMenuMobileActive}">
+    <app-topbar *ngIf="isLoggedIn"></app-topbar>
+
+
+    <div  *ngIf="isLoggedIn" class="layout-sidebar" (click)="onMenuClick($event)"
+         [ngClass]="{'layout-sidebar-dark': menuMode !== 'light',
+         'layout-sidebar-gradient':  menuMode === 'gradient'}">
+        <p-scrollPanel #layoutMenuScroller [style]="{height: '100%' }">
+            <div class="sidebar-scroll-content">
+                <app-inline-profile></app-inline-profile>
+                <app-menu [reset]="resetMenu"></app-menu>
+            </div>
+        </p-scrollPanel>
+    </div>
+
+    <app-right-panel-menu *ngIf="isLoggedIn"></app-right-panel-menu>
+
+    <div class="layout-main">
+        <app-navigation-menu *ngIf="isLoggedIn"></app-navigation-menu>
+
+        <div  class="layout-main-content">
+            <router-outlet ></router-outlet>
+        </div>
+
+        <app-footer></app-footer>
+    </div>
+</div>

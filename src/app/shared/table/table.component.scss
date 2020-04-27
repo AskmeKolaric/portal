@@ -1,0 +1,105 @@
+.ui-filter {
+    .ui-inputtext {
+        width: 100%;
+    }
+}
+
+::ng-deep .ui-filter-calendar {
+    width: 100%;
+
+    .ui-calendar-w-btn {
+      width: 100%;
+    }
+
+    .ui-filter-calendar-input {
+      width: calc(100% - 30px);
+    }
+}
+
+::ng-deep .ui-spinner-input {
+    width: 100%;
+}
+
+::ng-deep .ui-filter-dropdown {
+  width: inherit;
+}
+
+::ng-deep .ui-edit-input-text {
+  width: inherit;
+}
+
+.ui-g {
+    margin: 0;
+    padding: 0;
+}
+
+::ng-deep #generic-table {
+    overflow: hidden;
+
+    tr.ui-state-selected {
+      background-color: #CDDC39;
+      color: #212121;
+    }
+  
+    th, td {
+      height: 30px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  
+    .ui-datatable-header,
+    .ui-datatable-footer {
+      height: 30px;
+      padding-top: .1em;
+      padding-bottom: .1em;
+    }
+
+    .ui-table-caption {
+      height: 56px;
+    }
+  
+    .ui-paginator-bottom {
+      white-space: nowrap;
+      height: 40px;
+    }
+}
+
+::ng-deep .ui-table-caption {
+  text-align: left;
+
+  .row {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .col-lg-12 {
+    padding: 0 0 0 0;
+  }
+
+  .toolbar-item {
+    padding-left: 5px;
+  }
+}
+
+i {
+  cursor: pointer;
+}
+
+#summary-line {
+  margin: 0;
+  height: 100%;
+  padding: 0;
+  line-height: 32px;
+}
+
+p-autoComplete ::ng-deep .ui-autocomplete-input {
+  width: calc(100% - 20px); // dropdown button
+}
+
+.calendar-range-splitter {
+  line-height: 30px;
+  display: inline-table;
+  align-items: center;
+}

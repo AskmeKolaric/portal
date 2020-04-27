@@ -1,0 +1,65 @@
+<div class="login-body" >
+
+    <div class="login-topbar">
+        <h1 style="color: white; padding-left: 10px; padding-bottom: 30px;">{{'LOGIN.TITLE' | translate }}</h1>
+<!--        <a href="#" class="logo">-->
+<!--            <img src="../../../assets/layout/images/logo.png" alt="california-layout"/>-->
+<!--        </a>-->
+    </div>
+
+    <img class="login-image" src="../../../assets/layout/images/image-access.png" alt="california-layout" />
+
+    <form [formGroup]="form" (ngSubmit)="doLogin()" class="form-signin">
+        <div class="login-panel ui-fluid">
+            <div class="ui-g">
+<!--                <div class="ui-g-12 login-icon-container">-->
+<!--                    <img class="login-icon" src="../../../assets/layout/images/icon-event.png"-->
+<!--                         alt="california-layout"/>-->
+<!--                </div>-->
+                <div class="ui-g-12 ui-lg-12 ui-md-12 logo-container">
+                    <span class="login-detail">{{'LOGIN.WELCOME' | translate }}</span>
+<!--                    <div class="login-detail">-->
+<!--                        <span>{{ 'LOGIN.WELCOME' | translate }}</span>-->
+<!--                    </div>-->
+                </div>
+                <div class="ui-g-12 ui-lg-12 ui-md-12">
+                    <div class="input-wrapper">
+                        <label>{{ 'LOGIN.EMAIL' | translate }}</label>
+                        <input formControlName="email" type="email" autocomplete="email"
+                               required="required"
+                               class="ui-inputtext ui-corner-all ui-state-default ui-widget"
+                               [ngClass]="{'ui-state-filled': form.controls.email.value}"
+                               data-selenium-id="login-email"
+                        >
+                    </div>
+                </div>
+                <div class="ui-g-12 ui-lg-12 ui-md-12">
+                    <div class="input-wrapper">
+                        <label>{{ 'LOGIN.PASSWORD' | translate }}</label>
+                        <input formControlName="password" type="password" required="required"
+                               autocomplete="current-password"
+                               class="ui-inputtext ui-corner-all ui-state-default ui-widget"
+                               [ngClass]="{'ui-state-filled': form.controls.password.value}"
+                               data-selenium-id="login-password"
+                        >
+                    </div>
+                </div>
+
+                <div class="ui-g-12 ui-lg-12 ui-md-12 chkbox-container">
+                    <div class="remember-me">
+                        <input type="checkbox" class="ui-chkbox ui-chkbox-box">
+                        <span>{{ 'LOGIN.REMEMBER_ME' | translate }}</span>
+                        <a href="#">{{ 'LOGIN.FORGOT_PASSWORD' | translate }}</a>
+                    </div>
+                </div>
+                <div class="ui-g-12 ui-lg-12 ui-md-12 button-container">
+                    <button type="submit"
+                            class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+                        <span class="ui-button-text ui-c">{{ 'LOGIN.SIGN_IN' | translate }}</span>
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
